@@ -135,11 +135,13 @@ class OrderController extends PcBasicController
 					
 					//先拿折扣再算订单价格
 					$money = $product['price']*$number;
-					$pifa = $this->m_products_pifa->getPifa($pid);
-					if(!empty($pifa)){
-						foreach($pifa AS $pf){
-							if($number>=$pf['qty']){
-								$money = $money*$pf['discount'];
+					if($this->config['discountswitch']){
+						$pifa = $this->m_products_pifa->getPifa($pid);
+						if(!empty($pifa)){
+							foreach($pifa AS $pf){
+								if($number>=$pf['qty']){
+									$money = $money*$pf['discount'];
+								}
 							}
 						}
 					}
@@ -269,9 +271,14 @@ class OrderController extends PcBasicController
 									$orderid = $order['orderid'];
 								}*/
 								$orderid = $order['orderid'];
+								if($this->config['paysubjectswitch']>0){
+									$productname = $order['orderid'];
+								}else{
+									$productname = $order['productname'];
+								}
 								$payclass = "\\Pay\\".$paymethod."\\".$paymethod;
 								$PAY = new $payclass();
-								$params =array('pid'=>$order['pid'],'orderid'=>$orderid,'money'=>$order['money'],'productname'=>$order['productname'],'weburl'=>$this->config['weburl']);
+								$params =array('pid'=>$order['pid'],'orderid'=>$orderid,'money'=>$order['money'],'productname'=>$productname,'weburl'=>$this->config['weburl'],'qrserver'=>$this->config['qrserver']);
 								$data = $PAY->pay($payconfig,$params);
 							} catch (\Exception $e) {
 								$data = array('code' => 1005, 'msg' => $e->getMessage());
@@ -295,14 +302,17 @@ class OrderController extends PcBasicController
 	//支付宝当面付生成二维码
 	public function showqrAction()
 	{
-        $url = $this->get('url',true);
+		$url = $this->get('url',true);
 		if($url){
 			//增加安全判断
 			if(isset($_SERVER['HTTP_REFERER'])){
 				$referer_url = parse_url($_SERVER['HTTP_REFERER']);
 				$web_url = parse_url($this->config['weburl']);
 				if($referer_url['host']!=$web_url['host']){
-					echo 'fuck you!';exit();
+					$img = APP_PATH.'/public/res/images/pay/weburl-error.png';
+					@header("Content-Type:image/png");
+					echo file_get_contents($img);
+					exit();
 				}
 			}
 			try{

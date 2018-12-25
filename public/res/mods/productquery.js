@@ -1,9 +1,10 @@
-layui.define(['layer', 'form','jquery','base64','laytpl'], function(exports){
+layui.define(['layer', 'form','jquery','base64','laytpl','element'], function(exports){
 	var $ = layui.jquery;
 	var layer = layui.layer;
 	var form = layui.form;
 	var device = layui.device();
 	var laytpl = layui.laytpl;
+	var element = layui.element;
 	var lodding;
 	
 	function createTime(v){
@@ -115,6 +116,7 @@ layui.define(['layer', 'form','jquery','base64','laytpl'], function(exports){
 					laytpl(getTpl).render(res, function(html){
 					  view.innerHTML = html;
 					});
+					element.render('query-m-result');
 					$("#query-form").hide();
 				}else{
 					$("#query-table tbody").html("<tr></tr>");
