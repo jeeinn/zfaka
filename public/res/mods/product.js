@@ -1,6 +1,8 @@
-﻿layui.define(['layer', 'form'], function(exports){
+﻿layui.define(['layer', 'form','laytpl','element'], function(exports){
 	var $ = layui.jquery;
 	var layer = layui.layer;
+	var laytpl = layui.laytpl;
+	var element = layui.element;
 	var form = layui.form;
 	var device = layui.device();
 	
@@ -15,12 +17,17 @@
 		var stockcontrol = Number($('#stockcontrol').val());
 		var number = Number($('#number').val());
 		var qty = Number($('#qty').val());
+		if(number<1){
+			number =1;
+			$('#number').val(qty);
+		}
 		if(stockcontrol>0){
 			if(number>qty){
 				$('#number').val(qty);
 				number = qty;
 			}
 		}
+		
 		var money = $('#money').val();
 		var price = parseFloat($('#price').val());
 		money = price*number;
@@ -461,8 +468,9 @@
 	autoHeight();
 	
 	//首页广告弹窗
-	if(typeof(LAYERAD)!="undefined"){
-		if(LAYERAD.length>0){
+	var layerad = $("#layerad").html(); 
+	if(typeof(layerad)!="undefined"){
+		if(layerad.length>0){
 			layer.open({
 				type: 1
 				,title: false
@@ -473,7 +481,7 @@
 				,btn: [ '关闭']
 				,btnAlign: 'c'
 				,moveType: 1 //拖拽模式，0或者1
-				,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">'+LAYERAD+'</div>'
+				,content: '<div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">'+layerad+'</div>'
 			});
 		}
 	}
@@ -563,5 +571,28 @@
 			});
 		}
 	}	
+	
+	//查询批发优惠
+	$('#view-youhui').on('click', function(event) {
+		var getTpl = youhui_tpl.innerHTML;
+		var youhui_html = "";
+		laytpl(getTpl).render(PIFA, function(html){
+			 youhui_html = html;
+		});
+		element.render('query-m-result');
+		
+		layer.open({
+			type: 1
+			,title: false
+			,closeBtn: true
+			,offset: "auto"
+			,id: 'layerYouhuiAuto' //防止重复弹出
+			,content: youhui_html
+			,shade: 0 //不显示遮罩
+			,yes: function(){
+			  layer.closeAll();
+			}
+		});
+	});
 	exports('product',null)
 });
