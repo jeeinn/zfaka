@@ -42,7 +42,19 @@
 								<input type="text" id="app_secret" name="app_secret" required lay-verify="required" autocomplete="off" value="<?php echo $item['app_secret'];?>" class="layui-input">
                             </div>
                         </div>
-
+                        <div class="layui-form-item">
+                            <label for="configure3" class="layui-form-label">网关地址</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="configure3" name="configure3" required lay-verify="required" autocomplete="off" value="<?php echo $item['configure3'];?>" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">支付页面</label>
+                            <div class="layui-input-inline">
+                                <input type="radio" name="configure4" value="0" title="本地" <?php if($item['configure4']=='0' ):?>checked=""<?php endif;?>>
+                                <input type="radio" name="configure4" value="1" title="云端" <?php if($item['configure4']=='1' ):?>checked=""<?php endif;?>>
+                            </div>
+                        </div>		
                         <div class="layui-form-item">
                             <label class="layui-form-label">是否激活</label>
                             <div class="layui-input-inline">
